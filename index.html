@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Насти 🤍</title>
+    <style>
+        #secret-heart {
+    position: fixed; /* Это приклеивает его к экрану */
+    bottom: 15px;    /* Отступ снизу */
+    right: 15px;     /* Отступ справа */
+    font-size: 18px;
+    opacity: 0.2;    /* Вот тут магия — оно почти прозрачное! */
+    cursor: pointer;
+    z-index: 100;    /* Чтобы было поверх всего */
+    transition: 0.5s;
+}
+#secret-heart:hover { 
+    opacity: 1;      /* Становится ярким при наведении */
+    transform: scale(1.2); 
+}
+        body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; font-family: sans-serif; color: white; background: #0a0a0a; text-align: center; overflow: hidden; }
+        .container { padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(10px); width: 280px; z-index: 10; border: 1px solid rgba(255,255,255,0.1); }
+        .photo { width: 100%; border-radius: 10px; margin-top: 15px; display: none; transition: 0.5s; }
+        .btn { background: white; color: black; padding: 15px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; margin-top: 20px; display: inline-block; user-select: none; }
+        .btn:active { transform: scale(0.9); }
+        .heart { position: absolute; pointer-events: none; animation: moveUp 3s linear forwards; z-index: 5; }
+        @keyframes moveUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-110vh); opacity: 0; } } 
+        /* ДОБАВЬ ВОТ ЭТОТ КУСОК: */
+    #title {
+        transition: all 0.3s ease; /* Чтобы изменения были плавными */
+    }
+
+    #title:hover {
+        color: #ffeb3b; /* Цвет станет золотистым при наведении */
+        transform: scale(1.1); /* Заголовок чуть-чуть увеличится */
+        text-shadow: 0 0 10px rgba(255, 235, 59, 0.7); /* Появится свечение */
+    }
+
+    /* Добавим легкую пульсацию, чтобы заголовок «дышал» */
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    #title {
+        animation: pulse 2s infinite;
+    }
+    </style>
+</head>
+<body><div id="secret-heart">🤍</div>
+
+    <div class="container">
+        <h1 id="title" style="cursor:pointer; user-select: none;">24.03.2026</h1>
+        <p id="desc">Насть, этот день начинается здесь...</p>
+        <img id="pic" class="photo" src="">
+        <div class="btn" id="mainBtn">Начать сюрприз</div>
+    </div><div id="secret-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 200;" onclick="this.style.display='none'">
+    <img src="4.jpg" style="max-width: 85%; border-radius: 15px; border: 2px solid white;">
+</div>
+
+    <script>
+        const content = [
+            { t: "С днём рождения! ✨", p: "1.jpg" },
+            { t: "Ты очень искренняя, оставайся такой же 🤍", p: "2.jpg" },
+            { t: "Пусть этот год будет самым крутым!", p: "3.jpg" }
+        ];
+        let step = 0;
+
+        // Создание сердечек (вынес в отдельную функцию)
+        function createHeart(emoji = '🤍', isGolden = false) {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.innerHTML = emoji;
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.top = '100vh';
+            h.style.fontSize = isGolden ? (Math.random() * 20 + 20) + 'px' : '20px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }
+
+        const next = () => {
+            if (step < content.length) {
+                document.getElementById('title').innerText = "Для тебя";
+                document.getElementById('desc').innerText = content[step].t;
+                const img = document.getElementById('pic');
+                img.src = content[step].p;
+                img.style.display = 'block';
+                document.getElementById('mainBtn').innerText = "Дальше";
+                for(let i=0; i<10; i++) createHeart();
+                step++;
+            } else {
+                document.getElementById('desc').innerText = "Надеюсь, тебе понравилось! 😊";
+                document.getElementById('pic').style.display = 'none';
+                document.getElementById('mainBtn').style.display = 'none';
+            }
+        };
+
+        document.getElementById('mainBtn').onclick = next;
+
+        // --- БЛОК ПАСХАЛОК ---
+
+        // 1. Тройной клик по заголовку = Золотой дождь
+        let clicks = 0;
+        document.getElementById('title').onclick = () => {
+            clicks++;
+            if (clicks === 3) {
+                for(let i=0; i<50; i++) {
+                    setTimeout(() => createHeart('💛', true), i * 50);
+                }
+                clicks = 0;
+            }
+            setTimeout(() => { clicks = 0; }, 1000); // Сброс кликов через секунду
+        };
+
+        // 2. Долгое нажатие на текст = Секретное сообщение
+        let timer;
+        const descText = document.getElementById('desc');
+        
+        const showSecret = () => {
+            timer = setTimeout(() => {
+                alert("Пасхалка: Ты самая крутая девчонка! Этот сайт я собрал сам специально для тебя 🤍");
+            }, 1500);
+        };
+        descText.onmousedown = showSecret;
+        descText.ontouchstart = showSecret; // Для телефона
+        descText.onmouseup = () => clearTimeout(timer);
+        descText.ontouchend = () => clearTimeout(timer);
+        const secHeart = document.getElementById('secret-heart');
+const secOverlay = document.getElementById('secret-overlay');
+
+if (secHeart && secOverlay) {
+    secHeart.addEventListener('click', function() {
+        console.log("Клик сработал!");
+        secOverlay.style.display = 'flex';
+        // Насыпаем сердечек
+        for(let i=0; i<20; i++) {
+            setTimeout(createHeart, i * 100);
+        }
+    });
+}
+
+    </script>
+</body>
+</html>
